@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio DSTARDD C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the DSTARDD GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+

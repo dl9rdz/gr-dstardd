@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<block>
+  <name>D-Star DD Encoder</name>
+  <key>dstardd_dstardd_encoder</key>
+  <category>[D-Star DD]</category>
+  <import>import dstardd</import>
+  <make>dstardd.dstardd_encoder($verbose)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Verbose</name>
+    <key>verbose</key>
+    <value>True</value>
+    <type>bool</type>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+  </param>   
+  <param>
+    <name>Packed output</name>
+    <key>packed</key>
+    <value>True</value>
+    <type>bool</type>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+  </param>   
+  <param>
+    <name>MY</name>
+    <key>my1</key>
+    <value>DL9RDZ</value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>MY2</name>
+    <key>my2</key>
+    <value>SDR </value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>YOUR</name>
+    <key>your</key>
+    <value>CQCQCQ</value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>RPTR1</name>
+    <key>rptr1</key>
+    <value>DB0VOX A</value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>RPTR2</name>
+    <key>rptr2</key>
+    <value>DB0VOX G</value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+  <param>
+    <name>TYPE</name>
+    <key>type</key>
+    <value>0xC0</value>
+    <type>string</type>
+    <hide>part</hide>
+  </param>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>pdu</name>
+    <type>message</type>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>out</name>
+    <type>byte</type>
+  </source>
+</block>

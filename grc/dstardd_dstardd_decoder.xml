@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<block>
+  <name>D-Star DD Decoder</name>
+  <key>dstardd_dstardd_decoder</key>
+  <category>[D-Star DD]</category>
+  <import>import dstardd</import>
+  <make>dstardd.dstardd_decoder($verbose)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+   <param>
+    <name>Verbose</name>
+    <key>verbose</key>
+    <value>True</value>
+    <type>bool</type>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+  </param>   
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>in</name>
+    <type>byte</type>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>pdu</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+</block>
