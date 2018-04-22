@@ -109,10 +109,11 @@ void dstar_printhead(unsigned char *data, int len, int istx) {
 	uint16_t crc = (data[40]<<8) + data[39];
 	unsigned char crcstr[20];
 	if(istx) { sprintf(crcstr,""); }
-	else if(datacrc==crc) { sprintf(crcstr,GREEN " OK " NORMAL); }
-	else { sprintf(crcstr, RED "%04X" NORMAL, datacrc); }
-	snprintf(out, 120, "%cX(%02X/%02X%02X) %.8s(%.4s)>%.8s via %.8s,%.8s CRC %04X[%s] DLen=%d",
+	else if(datacrc==crc) { sprintf(crcstr,"[" GREEN " OK " NORMAL "]"); }
+	else { sprintf(crcstr, "[" RED "%04X" NORMAL "]", datacrc); }
+	snprintf(out, 120, "%cX(%02X/%02X%02X) %.8s(%.4s)>%.8s via %.8s,%.8s CRC %04X%s DLen=%d",
 		istx?'T':'R',data[0],data[1],data[2],data+27,data+35,data+19,data+3,data+11,crc,crcstr,len);
+	for(int i=0; i<strlen(out); i++) { if(out[i]!=27 &&(out[i]<32||out[i]>=127)) out[i]='?'; }
 	fprintf(stderr,"\n%s\n",out);
 }
 

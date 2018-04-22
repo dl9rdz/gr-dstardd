@@ -79,7 +79,7 @@ namespace gr {
        unsigned char encoded[85+len+4 +16*4]; // +16: plus experiental padding
        len = dstar_encode(d_header, reinterpret_cast<const unsigned char*>(pmt::u8vector_elements(vector).data()), len, encoded);
        if(d_verbose) { 
-	      dstar_printhead(d_header, len, 1);
+	      dstar_printhead(d_header, len-85, 1);
        }
       
        boost::lock_guard<gr::thread::mutex> lock{d_mutex};
