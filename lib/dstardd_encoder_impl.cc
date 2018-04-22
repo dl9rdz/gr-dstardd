@@ -49,7 +49,7 @@ namespace gr {
       dstar_init();
       message_port_register_in(pmt::mp("pdu"));
       set_msg_handler(pmt::mp("pdu"), boost::bind(&dstardd_encoder_impl::pdu, this, _1));
-      set_output_multiple(8192);  // large enough for large packet
+      set_output_multiple(8*8192);  // large enough for large packet
     }
 
     /*
@@ -61,7 +61,7 @@ namespace gr {
 
     void
     dstardd_encoder_impl::mkheader() {
-       d_header[0]=0xC0;
+       d_header[0]=0x80;
        d_header[1]=d_header[2]=0;
        memcpy(d_header+3, d_rptr1, 8);
        memcpy(d_header+11, d_rptr2, 8);
@@ -73,20 +73,25 @@ namespace gr {
     void
     dstardd_encoder_impl::pdu(pmt::pmt_t msg)
     {
-       if(d_verbose) { std::cout << "Message Received\n"; }
        pmt::pmt_t vector = pmt::cdr(msg);
        size_t len = pmt::blob_length(vector);
        size_t offset = 0;
-       unsigned char encoded[85+len+4];
-       dstar_encode(d_header, reinterpret_cast<const unsigned char*>(pmt::u8vector_elements(vector).data()), len, encoded);
+       unsigned char encoded[85+len+4 +16*4]; // +16: plus experiental padding
+       len = dstar_encode(d_header, reinterpret_cast<const unsigned char*>(pmt::u8vector_elements(vector).data()), len, encoded);
+       if(d_verbose) { 
+	      dstar_printhead(d_header, len, 1);
+       }
       
        boost::lock_guard<gr::thread::mutex> lock{d_mutex};
-       if(d_encoded_ready) {  std::cout << "Encoded buffer overflow - dropping message\n"; }
+       if(d_encoded_ready) { 
+	       std::cout << "Encoded buffer overflow - dropping message\n";
+	       std::cout << "(left bytes is "<<d_encoded_ready<<")\n";
+       }
        // 01-Sequence and Sync 
        memset(d_encoded, 0x55, d_prefixlen);
        memcpy(d_encoded+d_prefixlen, "\x76\x50", 2);
-       memcpy(d_encoded+d_prefixlen+2, encoded, 85+len+4);
-       d_encoded_ready = d_prefixlen + 2 + 85+len+4;
+       memcpy(d_encoded+d_prefixlen+2, encoded, len);
+       d_encoded_ready = d_prefixlen + 2 + len;
        d_cond.notify_one(); 
     }
 
@@ -104,27 +109,19 @@ namespace gr {
                        gr_vector_void_star &output_items)
     {
       unsigned char *out= (unsigned char *) output_items[0];
-#if 0
-      const <+ITYPE+> *in = (const <+ITYPE+> *) input_items[0];
 
-      // Do <+signal processing+>
-      // Tell runtime system how many input items we consumed on
-      // each input stream.
-      consume_each (noutput_items);
-
-      // Tell runtime system how many output items we produced.
-#endif
-      std::cout << "working\n" << d_encoded_ready;
       boost::unique_lock<boost::mutex> lock(d_mutex);
-      if(!d_encoded_ready) { d_cond.timed_wait(lock, boost::posix_time::milliseconds(1000)); }
+      if(!d_encoded_ready) { d_cond.timed_wait(lock, boost::posix_time::milliseconds(10)); }
       if(!d_encoded_ready) { return 0; }
 
-      /* Process output data from dencoded */
+      /* Process output data from d_encoded */
       if(noutput_items < d_encoded_ready + 2 + d_prefixlen/8) {
-         std::cout << "Not enough space for a block\n";
+         std::cout << "noutput_items: " << noutput_items << " vs needed: " << 
+		 (d_encoded_ready+2+d_prefixlen/8) << "\n";
+         d_encoded_ready=0;
          return 0; // TODO FIXME -- should never happen
       }
-      std::cout << "Output of a block\n" << d_encoded_ready;
+      std::cout << "TX: Output of a block w/ " << d_encoded_ready << " bytes\n";
       memcpy(out, d_encoded, d_encoded_ready);
       noutput_items = d_encoded_ready;
       d_encoded_ready=0;

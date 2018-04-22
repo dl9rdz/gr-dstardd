@@ -75,6 +75,7 @@ namespace gr {
 
       // Do <+signal processing+>
       // Currently, in is a byte per bit; might extend this in the future for optional packing
+      //fprintf(stderr, "working on %d items\n", ninput_items[0]);
       for(int i=0; i<ninput_items[0]; i++) {
          if(d_state==DSTAR_SYNC) { 
             d_pattern = (d_pattern<<1) | (in[i]&1);
@@ -90,9 +91,13 @@ namespace gr {
                d_bitcount = 0;
                unsigned char head[HEADBITS/8+1];
                d_datalen = dstar_decode_head(d_headbits, head);
-               if(d_verbose) { dstar_printhead(head, d_datalen); }
-               if(d_datalen>1600) d_datalen=1600;
-               d_datalen = (d_datalen + 4) * 8;   // bits, including 4 byte CRC
+               if(d_verbose) { dstar_printhead(head, d_datalen, 0); }
+	       if(d_datalen<0) {
+		       	// Invalid header CRC
+		  d_state = DSTAR_SYNC;
+	       } else {
+                  d_datalen = (d_datalen + 4) * 8;   // bits, including 4 byte CRC
+	       }
             }
          }
          else if (d_state==DSTAR_DATA) { 

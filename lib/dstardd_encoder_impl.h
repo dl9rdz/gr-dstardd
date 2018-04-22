@@ -37,8 +37,8 @@ namespace gr {
       char d_rptr1[9]="DB0VOX A";
       char d_rptr2[9]="DB0VOX G";
 
-      int d_prefixlen=16;  // bytes, i.e. 16 byte=128 bit
-      char d_encoded[16+85+4+4000];
+      int d_prefixlen=64;  // bytes, i.e. 16 byte=128 bit
+      char d_encoded[64/*16*/+85+4+4000];
       int d_encoded_ready=0;
 
       boost::mutex d_mutex;
