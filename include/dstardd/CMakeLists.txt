@@ -23,5 +23,6 @@
 install(FILES
     api.h
     dstardd_decoder.h
-    dstardd_encoder.h DESTINATION include/dstardd
+    dstardd_encoder.h
+    simple_gmsk_demod.h DESTINATION include/dstardd
 )

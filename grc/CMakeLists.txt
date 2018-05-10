@@ -19,5 +19,6 @@
 
 install(FILES
     dstardd_dstardd_decoder.xml
-    dstardd_dstardd_encoder.xml DESTINATION share/gnuradio/grc/blocks
+    dstardd_dstardd_encoder.xml
+    dstardd_simple_gmsk_demod.xml DESTINATION share/gnuradio/grc/blocks
 )

@@ -31,6 +31,7 @@ list(APPEND dstardd_sources
     codec/crc32.c
     codec/viterbi.c
     dstardd_encoder_impl.cc
+    simple_gmsk_demod_impl.cc
 )
 
 set(dstardd_sources "${dstardd_sources}" PARENT_SCOPE)
